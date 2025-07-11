@@ -10,13 +10,14 @@ class Cors implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
-        header("Access-Control-Allow-Origin: *"); // Change * to your frontend origin if needed
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+        header("Access-Control-Allow-Origin: http://localhost:3000"); // Or use * during development
         header("Access-Control-Allow-Headers: Content-Type, Authorization");
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 
-        // Handle preflight OPTIONS request
+        // Handle preflight requests
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-            exit(0);
+            header('HTTP/1.1 200 OK');
+            exit();
         }
     }
 
