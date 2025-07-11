@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export function Dashboard() {
     const [employees, setEmployees] = useState([]);
     const [expandedRow, setExpandedRow] = useState(null);
-    const accessToken = localStorage.getItem("access");
+    const accessToken = localStorage.getItem("token");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,8 +21,7 @@ export function Dashboard() {
     }
 
     function logout() {
-        localStorage.removeItem("access");
-        localStorage.removeItem("refresh");
+        localStorage.removeItem('token');
         window.location.href = "/login";
     }
 
