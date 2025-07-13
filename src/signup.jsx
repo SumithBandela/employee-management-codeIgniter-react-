@@ -5,13 +5,13 @@ import * as Yup from 'yup';
 export function Signup() {
   const formik = useFormik({
     initialValues: {
-      username: '',
+      name: '',
       email: '',
       password: ''
     },
     validationSchema: Yup.object({
-      username: Yup.string()
-        .required('Username is required'),
+      name: Yup.string()
+        .required('name is required'),
       email: Yup.string()
         .email('Invalid email address')
         .required('Email is required'),
@@ -21,7 +21,7 @@ export function Signup() {
     }),
     onSubmit: async (values, { setSubmitting, resetForm, setStatus }) => {
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/signup/', values);
+        const response = await axios.post('http://localhost:8080/auth/signup', values);
         setStatus({ success: response.data.message });
         resetForm();
       } catch (error) {
@@ -49,20 +49,20 @@ export function Signup() {
 
       <form onSubmit={formik.handleSubmit}>
         <div className="mb-3">
-          <label>Username</label>
+          <label>name</label>
           <input
             type="text"
-            name="username"
+            name="name"
             className="form-control"
-            value={formik.values.username}
+            value={formik.values.name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          {formik.touched.username && formik.errors.username && (
-            <div className="text-danger">{formik.errors.username}</div>
+          {formik.touched.name && formik.errors.name && (
+            <div className="text-danger">{formik.errors.name}</div>
           )}
-          {formik.status?.error?.username && (
-            <div className="text-danger">{formik.status.error.username[0]}</div>
+          {formik.status?.error?.name && (
+            <div className="text-danger">{formik.status.error.name[0]}</div>
           )}
         </div>
 

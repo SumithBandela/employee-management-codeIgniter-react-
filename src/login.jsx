@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useFormik } from "formik";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 
 export function Login() {
@@ -56,7 +56,11 @@ export function Login() {
         {formik.status?.error && (
           <div className="text-danger text-center mt-2">{formik.status.error}</div>
         )}
+         <div className="text-center m-2">
+          <span>Don't have an account? <Link to='/signup' className="text-primary">Sign up</Link></span>
+      </div>
       </form>
+     
     </div>
   );
 }
