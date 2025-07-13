@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { useFormik } from 'formik';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+
 export function Signup() {
+  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -10,23 +12,26 @@ export function Signup() {
       password: ''
     },
     validationSchema: Yup.object({
-      name: Yup.string()
-        .required('name is required'),
-      email: Yup.string()
-        .email('Invalid email address')
-        .required('Email is required'),
-      password: Yup.string()
-        .min(6, 'Password must be at least 6 characters')
-        .required('Password is required')
+      name: Yup.string().required('Name is required'),
+      email: Yup.string().email('Invalid email').required('Email is required'),
+      password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required')
     }),
     onSubmit: async (values, { setSubmitting, resetForm, setStatus }) => {
       try {
-        const response = await axios.post('http://localhost:8080/auth/signup', values);
-        setStatus({ success: response.data.message });
+        const response = await axios.post('http://localhost:8080/auth/signup', values, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        // Show success message
+        setStatus({ success: response.data.message || 'Signup successful' });
         resetForm();
+        navigate('/login');
       } catch (error) {
         if (error.response && error.response.data) {
-          setStatus({ error: error.response.data });
+          const errors = error.response.data.messages || { general: 'Signup failed' };
+          setStatus({ error: errors });
         } else {
           setStatus({ error: { general: 'Something went wrong' } });
         }
@@ -40,16 +45,20 @@ export function Signup() {
     <div className="container mt-5 w-50 border border-2 p-4">
       <h2>Signup</h2>
 
+      {/* Success Alert */}
       {formik.status?.success && (
         <div className="alert alert-success">{formik.status.success}</div>
       )}
+
+      {/* General Error */}
       {formik.status?.error?.general && (
         <div className="alert alert-danger">{formik.status.error.general}</div>
       )}
 
       <form onSubmit={formik.handleSubmit}>
+        {/* Name Field */}
         <div className="mb-3">
-          <label>name</label>
+          <label>Name</label>
           <input
             type="text"
             name="name"
@@ -66,6 +75,7 @@ export function Signup() {
           )}
         </div>
 
+        {/* Email Field */}
         <div className="mb-3">
           <label>Email</label>
           <input
@@ -84,6 +94,7 @@ export function Signup() {
           )}
         </div>
 
+        {/* Password Field */}
         <div className="mb-3">
           <label>Password</label>
           <input
@@ -102,12 +113,13 @@ export function Signup() {
           )}
         </div>
 
-        <button type="submit" className="btn btn-primary" disabled={formik.isSubmitting}>
+        <button type="submit" className="btn btn-primary w-100" disabled={formik.isSubmitting}>
           {formik.isSubmitting ? 'Creating...' : 'Signup'}
         </button>
-       <div className='text-center mt-2'>
-            <Link to='/login'>Back to login page</Link>
-       </div>
+
+        <div className="text-center mt-2">
+          <Link to="/login">Back to login page</Link>
+        </div>
       </form>
     </div>
   );

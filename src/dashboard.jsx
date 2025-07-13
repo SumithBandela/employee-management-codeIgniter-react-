@@ -29,16 +29,25 @@ export function Dashboard() {
         <div className="container mt-5">
             <h2 className="text-center text-success mb-4">Employee Dashboard</h2>
 
-            <div className="d-flex justify-content-end mb-3">
+            <div className="d-flex justify-content-between mb-3">
                 <button
-                    className="btn btn-primary me-2"
+                    className="btn btn-primary"
                     onClick={() => navigate("add")}
                 >
                     Add Employee
                 </button>
-                <button className="btn btn-danger" onClick={logout}>
-                    Logout
-                </button>
+
+                <div>
+                    <button
+                        className="btn btn-outline-secondary me-2"
+                        onClick={() => navigate("/change-password")}
+                    >
+                        Change Password
+                    </button>
+                    <button className="btn btn-danger" onClick={logout}>
+                        Logout
+                    </button>
+                </div>
             </div>
 
             {employees.length === 0 ? (
@@ -47,7 +56,6 @@ export function Dashboard() {
                 employees.map((employee) => (
                     <div key={employee.id} className="card mb-3 shadow-sm">
                         <div className="card-body d-flex align-items-center">
-                            {/* Employee Photo */}
                             <img
                                 src={`http://localhost:8080${employee.photo}`}
                                 alt="Employee"
@@ -60,7 +68,6 @@ export function Dashboard() {
                                 }}
                             />
 
-                            {/* Basic Info */}
                             <div className="flex-grow-1">
                                 <h5 className="mb-1">
                                     {employee.firstname} {employee.lastname}
@@ -68,7 +75,6 @@ export function Dashboard() {
                                 <p className="mb-0 text-muted">{employee.email}</p>
                             </div>
 
-                            {/* Action Buttons */}
                             <div>
                                 <button
                                     className="btn btn-info btn-sm me-2"
@@ -91,7 +97,6 @@ export function Dashboard() {
                             </div>
                         </div>
 
-                        {/* Expandable Details */}
                         {expandedRow === employee.id && (
                             <div className="card-footer bg-light">
                                 <div className="row">
