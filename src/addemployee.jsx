@@ -6,29 +6,26 @@ import * as yup from "yup";
 export function AddEmployee() {
   const navigate = useNavigate();
   
-  const formik = useFormik({
+    const formik = useFormik({
     initialValues: {
-      firstname: '',
-      lastname: '',
-      email: '',
-      phone: '',
+      ename: '',
+      job: '',
+      hiredate: '',
       salary: '',
-      designation: '',
-      joined_date: '',
-      photo: null   
+      deptno: '',
+      mail_id: '',
+      photo: null,
     },
     validationSchema: yup.object({
-      firstname: yup.string().required('Firstname is required'),
-      lastname: yup.string().required('Lastname is required'),
-      email: yup.string().email('Invalid email').required('Email is required'),
-      phone: yup.string().matches(/^\d{10}$/, "Phone number must be 10 digits").required("Phone number is required"),
-      salary: yup.string().required('Salary is required'),
-      designation: yup.string().required('Designation is required'),
-      joined_date: yup.date().required('Joining date is required'),
+      ename: yup.string().required('Employee name is required'),
+      job: yup.string().required('Job is required'),
+      hiredate: yup.date().required('Hire date is required'),
+      salary: yup.number().required('Salary is required'),
+      deptno: yup.number().required('Department number is required'),
+      mail_id: yup.string().email('Invalid email').required('Email is required'),
     }),
     onSubmit: async (formData, { setSubmitting, resetForm }) => {
       setSubmitting(true);
-
       try {
         if (!formData.photo) {
           alert("Please select a photo.");
@@ -36,28 +33,22 @@ export function AddEmployee() {
           return;
         }
 
-        // Create a new FormData object and append form fields
         const formDataToSend = new FormData();
-        formDataToSend.append('firstname', formData.firstname);
-        formDataToSend.append('lastname', formData.lastname);
-        formDataToSend.append('email', formData.email);
-        formDataToSend.append('phone', formData.phone);
+        formDataToSend.append('ename', formData.ename);
+        formDataToSend.append('job', formData.job);
+        formDataToSend.append('hiredate', formData.hiredate);
         formDataToSend.append('salary', formData.salary);
-        formDataToSend.append('designation', formData.designation);
-        formDataToSend.append('joined_date', formData.joined_date);
-        formDataToSend.append('photo', formData.photo); // Sending the file directly
+        formDataToSend.append('deptno', formData.deptno);
+        formDataToSend.append('mail_id', formData.mail_id);
+        formDataToSend.append('photo', formData.photo);
 
-        // Post the form data
         const response = await axios.post('http://localhost:8080/api/employees', formDataToSend, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
 
         console.log('Employee added:', response.data);
         navigate('/dashboard');
         resetForm();
-        
       } catch (error) {
         console.error('Error adding employee:', error.response?.data || error.message);
       } finally {
@@ -66,112 +57,59 @@ export function AddEmployee() {
     }
   });
 
+
   return (
     <div className="d-flex justify-content-center align-items-center mt-5 container">
       <form className="m-2 p-4 w-50 border border-2" onSubmit={formik.handleSubmit} encType="multipart/form-data">
         <h2>Add Employee</h2>
         <dl>
-          <dt>Firstname</dt>
+          <dt>Employee Name</dt>
           <dd>
-            <input
-              type="text"
-              name="firstname"
-              className="form-control"
-              onChange={formik.handleChange}
-              value={formik.values.firstname}
-            />
-            {formik.touched.firstname && formik.errors.firstname && (
-              <div className="text-danger">{formik.errors.firstname}</div>
-            )}
+            <input type="text" name="ename" className="form-control" onChange={formik.handleChange} value={formik.values.ename} />
+            {formik.touched.ename && formik.errors.ename && <div className="text-danger">{formik.errors.ename}</div>}
           </dd>
 
-          <dt>Lastname</dt>
+          <dt>Job</dt>
           <dd>
-            <input
-              type="text"
-              name="lastname"
-              className="form-control"
-              onChange={formik.handleChange}
-              value={formik.values.lastname}
-            />
-            {formik.touched.lastname && formik.errors.lastname && (
-              <div className="text-danger">{formik.errors.lastname}</div>
-            )}
+            <select name="job" className="form-select" onChange={formik.handleChange} value={formik.values.job}>
+              <option value="">Select Job</option>
+              <option value="CLERK">CLERK</option>
+              <option value="SALESMAN">SALESMAN</option>
+              <option value="MANAGER">MANAGER</option>
+              <option value="ANALYST">ANALYST</option>
+              <option value="PRESIDENT">PRESIDENT</option>
+            </select>
+            {formik.touched.job && formik.errors.job && <div className="text-danger">{formik.errors.job}</div>}
           </dd>
 
-          <dt>Email</dt>
+          <dt>Hire Date</dt>
           <dd>
-            <input
-              type="text"
-              name="email"
-              className="form-control"
-              onChange={formik.handleChange}
-              value={formik.values.email}
-            />
-            {formik.touched.email && formik.errors.email && (
-              <div className="text-danger">{formik.errors.email}</div>
-            )}
-          </dd>
-
-          <dt>Phone</dt>
-          <dd>
-            <input
-              type="text"
-              name="phone"
-              className="form-control"
-              onChange={formik.handleChange}
-              value={formik.values.phone}
-            />
-            {formik.touched.phone && formik.errors.phone && (
-              <div className="text-danger">{formik.errors.phone}</div>
-            )}
+            <input type="date" name="hiredate" className="form-control" onChange={formik.handleChange} value={formik.values.hiredate} />
+            {formik.touched.hiredate && formik.errors.hiredate && <div className="text-danger">{formik.errors.hiredate}</div>}
           </dd>
 
           <dt>Salary</dt>
           <dd>
-            <input
-              type="text"
-              name="salary"
-              className="form-control"
-              onChange={formik.handleChange}
-              value={formik.values.salary}
-            />
-            {formik.touched.salary && formik.errors.salary && (
-              <div className="text-danger">{formik.errors.salary}</div>
-            )}
+            <input type="number" name="salary" className="form-control" onChange={formik.handleChange} value={formik.values.sal} />
+            {formik.touched.salary && formik.errors.salary && <div className="text-danger">{formik.errors.salary}</div>}
           </dd>
 
-          <dt>Designation</dt>
+          <dt>Department Number</dt>
           <dd>
-            <select
-              name="designation"
-              className="form-select"
-              onChange={formik.handleChange}
-              value={formik.values.designation}
-            >
-              <option value="">Select Designation</option>
-              <option value="Python Developer">Python Developer</option>
-              <option value="Java Developer">Java Developer</option>
-              <option value="Php Developer">Php Developer</option>
-              <option value="React Js Developer">React Js Developer</option>
+            <select name="deptno" className="form-select" onChange={formik.handleChange} value={formik.values.deptno}>
+              <option value="">Select Department</option>
+              <option value="10">10 - ACCOUNTING</option>
+              <option value="20">20 - RESEARCH</option>
+              <option value="30">30 - SALES</option>
+              <option value="40">40 - OPERATIONS</option>
             </select>
-            {formik.touched.designation && formik.errors.designation && (
-              <div className="text-danger">{formik.errors.designation}</div>
-            )}
+            {formik.touched.deptno && formik.errors.deptno && <div className="text-danger">{formik.errors.deptno}</div>}
           </dd>
 
-          <dt>Joined Date</dt>
+          <dt>Email (Mail ID)</dt>
           <dd>
-            <input
-              type="date"
-              name="joined_date"
-              className="form-control"
-              onChange={formik.handleChange}
-              value={formik.values.joined_date}
-            />
-            {formik.touched.joined_date && formik.errors.joined_date && (
-              <div className="text-danger">{formik.errors.joined_date}</div>
-            )}
+            <input type="email" name="mail_id" className="form-control" onChange={formik.handleChange} value={formik.values.mail_id} />
+            {formik.touched.mail_id && formik.errors.mail_id && <div className="text-danger">{formik.errors.mail_id}</div>}
           </dd>
 
           <dt>Photo</dt>

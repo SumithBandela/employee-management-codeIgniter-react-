@@ -7,6 +7,7 @@ import { DeleteEmployee } from './deleteemployee';
 import { Signup } from './signup';
 import { PrivateRoute } from './privateroute';
 import { ChangePassword } from './changepassword';
+import { ViewEmployee } from './view-employee';
 function App() {
   return (
     <BrowserRouter>
@@ -22,15 +23,19 @@ function App() {
         <PrivateRoute><ChangePassword/></PrivateRoute>
        }/>
 
+       <Route path="/dashboard/view/:empno" element={
+        <PrivateRoute><ViewEmployee/></PrivateRoute>
+       } />
+
       <Route path='dashboard/add' element={
         <PrivateRoute><AddEmployee /></PrivateRoute>
       } />
 
-      <Route path='dashboard/edit/:id' element={
+      <Route path='dashboard/edit/:empno' element={
         <PrivateRoute><EditEmployee /></PrivateRoute>
       } />
 
-      <Route path='dashboard/delete/:id' element={
+      <Route path='dashboard/delete/:empno' element={
         <PrivateRoute><DeleteEmployee /></PrivateRoute>
       } />
     </Routes>

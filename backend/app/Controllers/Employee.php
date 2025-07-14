@@ -9,8 +9,8 @@ class Employee extends ResourceController{
         return $this->respond($this->model->findAll());
     }
 
-    public function show($id = null){
-        $data = $this->model->find($id);
+    public function show($empno = null){
+        $data = $this->model->find($empno);
         if(!$data){
             return $this->failNotFound('Employee not found');
         }
@@ -19,55 +19,55 @@ class Employee extends ResourceController{
     public function create(){
        
         $rules = [
-            'firstname' => 'required',
-            'lastname' => 'required',
-            'email' => 'required|valid_email|is_unique[employees.email]',
-            'phone' => 'required',
+            'ename' => 'required',
+            'job' => 'required',
+            'hiredate' => 'required|valid_date[Y-m-d]',
             'salary' => 'required',
-            'designation' => 'required',
+            'deptno' => 'required',
+            'mail_id' => 'required|valid_email|is_unique[employees.mail_id]',
             'photo' => 'uploaded[photo]|is_image[photo]|mime_in[photo,image/jpg,image/jpeg,image/png]|max_size[photo,2048]',
-            'joined_date' => 'required|valid_date[Y-m-d]'
+            
         ];
 
         if(!$this->validate($rules)){
             return $this->fail($this->validator->getErrors());
         }
 
-       $file = $this->request->getFile('photo');
-       if($file and !$file->hasMoved()){
-        $newName = $file->getRandomName();
-        $file->move(WRITEPATH.'uploads',$newName);
-       }
-        $joinedDate = $this->request->getPost('joined_date') ?: date('Y-m-d'); 
+       $photoName = null;
+        if ($file && !$file->hasMoved()) {
+            $photoName = $file->getRandomName();
+            $file->move(FCPATH . 'uploads', $photoName);
+        }
+
+        $hiredate = $this->request->getPost('hiredate') ?: date('Y-m-d'); 
          $data = [
-            'firstname' => $this->request->getPost('firstname'),
-            'lastname' => $this->request->getPost('lastname'),
-            'email' => $this->request->getPost('email'),
-            'phone' => $this->request->getPost('phone'),
+            'ename' => $this->request->getPost('ename'),
+            'job' => $this->request->getPost('job'),
+            'hiredate' => $hiredate,
             'salary' => $this->request->getPost('salary'),
-            'designation' => $this->request->getPost('designation'),
-            'photo' => $newName || null,
-            'joined_date' =>$joinedDate
+            'deptno' => $this->request->getPost('deptno'),
+            'mail_id' => $this->request->getPost('mail_id'),
+            'photo' => $photoName|| null,
          ];
          $this->model->save($data);
          return $this->respondCreated(['message'=>'Employee Created Successfully']);
     }
 
-    public function update($id = null){
+    public function update($empno = null){
         $data = $this->request->getJSON(true);
-        if(!$this->model->update($id,$data)){
+        if(!$this->model->update($empno,$data)){
             return $this->failValidationErrors($this->model->errors());
         }
         return $this->respond(['message'=>'Employee Updated']);
 
     }
 
-    public function delete($id = null){
-        if(!$this->model->find($id)){
+    public function delete($empno = null){
+        if(!$this->model->find($empno)){
             return $this->failNotFound('Employee Not Found');
         }
 
-        $this->model->delete($id);
+        $this->model->delete($empno);
 
         return $this->respondDeleted(['message'=>'Employee Deleted']);
 

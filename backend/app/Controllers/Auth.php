@@ -81,4 +81,21 @@ class Auth extends ResourceController
         ]);
     }
 
+    public function ChangePassword()
+    {
+        $rules = [
+            'old_password' =>  'required',
+            'new_password' => 'required|min_length[6]'
+        ];
+        
+        if(!$rules)
+        {
+            return $this->fail($this->validator->getErrors());
+        }
+
+        $userModel = new UserModel();
+        
+
+    }
+
 }
