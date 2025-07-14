@@ -48,7 +48,7 @@ export function Dashboard() {
           <div key={employee.empno} className="card mb-3 shadow-sm">
             <div className="card-body d-flex align-items-center">
               <img
-                src={`http://localhost:8080/${employee.photo}`}
+                src={`http://localhost:8080/uploads/${employee.photo}`}
                 alt="Employee"
                 className="img-thumbnail me-3"
                 style={{

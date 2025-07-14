@@ -123,7 +123,7 @@ export function EditEmployee() {
           {employee.photo && (
             <dd>
               <img
-                src={`http://localhost:8080/${employee.photo}`}
+                src={`http://localhost:8080/uploads/${employee.photo}`}
                 alt="Current"
                 width="100"
                 className="mt-2"

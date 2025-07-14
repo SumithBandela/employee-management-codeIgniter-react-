@@ -22,7 +22,7 @@ export function ViewEmployee() {
         <div className="row align-items-center">
           <div className="col-md-4 text-center">
             <img
-              src={`http://localhost:8080/${employee.photo}`}
+              src={`http://localhost:8080/uploads/${employee.photo}`}
               alt="Employee"
               className="img-fluid rounded-circle mb-3"
               style={{ width: "150px", height: "150px", objectFit: "cover" }}

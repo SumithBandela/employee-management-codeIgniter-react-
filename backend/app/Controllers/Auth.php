@@ -81,21 +81,46 @@ class Auth extends ResourceController
         ]);
     }
 
-    public function ChangePassword()
+    public function changePassword()
     {
+        $authHeader = $this->request->getHeader('Authorization');
+        if(!$authHeader || preg_match('/Bearer\s(\S+)/', $authHeader->getValue(), $matches)){
+            return $this->failUnauthorized('Missing or invalid authorization headers');
+        }
+
+        $token = $matches[1];
+
+        try{
+            $decoded = JWT::decode($token, new Firebase\JWT\Key($this->key,'HS256'));
+        }catch(\Exception $e)
+        {
+            return $this->failUnauthorized('Invalid or token expired');
+        }
+        $userid = $decoded->uid;
+
+        $data = $this->request->getJSON(true);
+
         $rules = [
-            'old_password' =>  'required',
+            'old_password' => 'required',
             'new_password' => 'required|min_length[6]'
         ];
-        
-        if(!$rules)
+
+        if(!$this->validate($data,$rules))
         {
             return $this->fail($this->validator->getErrors());
         }
 
         $userModel = new UserModel();
-        
+        $user =  $userModel->find($userid);
 
+        if(!$user || password_verify($data['old_password'],$user['password'])){
+            return $this->fail('old password is incorrect');
+        }
+
+        $user['password'] = password_hash($data['new_password'],PASSWORD_DEFAULT);
+        $userModel->update($userid,$user);
+
+        return $this->respond(['message'=>'password update successfully']);
     }
 
 }
