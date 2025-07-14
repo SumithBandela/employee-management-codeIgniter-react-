@@ -2,7 +2,8 @@
 
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\EmployeeModel;
-
+use CodeIgniter\Email\Email;
+use Config\Services;
 class Employee extends ResourceController
 {
     protected $modelName = 'App\Models\EmployeeModel';
@@ -59,6 +60,20 @@ class Employee extends ResourceController
         ];
 
         $this->model->save($data);
+        $email = Services::email();
+        $email->setTo('bsumith209@gmail.com');
+        $email->setFrom('sumithbandela@gmail.com');
+        $subject  = 'New Employee Added';
+        $message = 'A new employee has been added: <br><br>' .
+        'Name: ' . esc($data['ename']) . '<br>' .
+        'Job: ' . esc($data['job']) . '<br>' .
+        'Hire Date: ' . esc($data['hiredate']) . '<br>' .
+        'Mail ID: ' . esc($data['mail_id']);
+        $email->setSubject($subject);
+        $email->setMessage($message);
+        if (!$email->send()) {
+           log_message('error', 'Failed to send email: ' . print_r($email->printDebugger(), true));
+        }
         return $this->respondCreated(['message' => 'Employee Created Successfully']);
     }
 
