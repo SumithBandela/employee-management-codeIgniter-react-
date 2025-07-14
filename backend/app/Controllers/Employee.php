@@ -16,11 +16,22 @@ class Employee extends ResourceController
 
     public function show($empno = null)
     {
-        $data = $this->model->find($empno);
-        if (!$data) {
-            return $this->failNotFound('Employee not found');
-        }
-        return $this->respond($data);
+
+            $db = \Config\Database::connect();
+            $builder = $db->table('employees');
+
+
+            $builder->select('employees.*, departments.dname, departments.location');
+            $builder->join('departments', 'employees.deptno = departments.deptno');
+            $builder->where('employees.empno', $empno);
+
+            $data = $builder->get()->getRowArray();
+
+            if (!$data) {
+                return $this->failNotFound('Employee not found');
+            }
+
+            return $this->respond($data);
     }
 
     public function create()
@@ -39,8 +50,7 @@ class Employee extends ResourceController
             return $this->fail($this->validator->getErrors());
         }
 
-        $file = $this->request->getFile('photo'); // ✅ MISSING LINE
-
+        $file = $this->request->getFile('photo'); 
         $photoName = null;
         if ($file && !$file->hasMoved()) {
             $photoName = $file->getRandomName();

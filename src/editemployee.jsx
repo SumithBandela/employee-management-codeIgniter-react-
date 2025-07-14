@@ -43,7 +43,7 @@ export function EditEmployee() {
             }
           }
 
-          await axios.post(`http://localhost:8080/api/employees/update/${empno}`, form, {
+          await axios.put(`http://localhost:8080/api/employees/${empno}`, form, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },

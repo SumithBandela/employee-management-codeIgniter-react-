@@ -32,19 +32,22 @@ export function ViewEmployee() {
           </div>
 
           <div className="col-md-8">
-            <dl className="row">
-              <dt className="col-sm-4">Email</dt>
-              <dd className="col-sm-8">{employee.mail_id}</dd>
+           <dl className="row">
+            <dt className="col-sm-4">Email</dt>
+            <dd className="col-sm-8">{employee.mail_id}</dd>
 
-              <dt className="col-sm-4">Hire Date</dt>
-              <dd className="col-sm-8">{employee.hiredate}</dd>
+            <dt className="col-sm-4">Hire Date</dt>
+            <dd className="col-sm-8">{employee.hiredate}</dd>
 
-              <dt className="col-sm-4">Salary</dt>
-              <dd className="col-sm-8">₹{employee.salary}</dd>
+            <dt className="col-sm-4">Salary</dt>
+            <dd className="col-sm-8">₹{employee.salary}</dd>
 
-              <dt className="col-sm-4">Department</dt>
-              <dd className="col-sm-8">{employee.deptno}</dd>
-            </dl>
+            <dt className="col-sm-4">Department</dt>
+            <dd className="col-sm-8">{employee.dname} ({employee.deptno})</dd>
+
+            <dt className="col-sm-4">Location</dt>
+            <dd className="col-sm-8">{employee.location}</dd>
+          </dl>
 
             <div className="mt-4">
               <button
