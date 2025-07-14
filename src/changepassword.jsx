@@ -19,30 +19,38 @@ export function ChangePassword() {
         .required('Confirm password is required')
     }),
     onSubmit: async (values, { setSubmitting, setStatus, resetForm }) => {
-      try {
-        const token = localStorage.getItem('token'); // Adjust if using other storage
-        const response = await axios.post(
-          'http://localhost:8080/auth/change-password',
-          values,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
+        try {
+          const token = localStorage.getItem('token');
+
+          const payload = {
+            old_password: values.old_password,
+            new_password: values.new_password
+          };
+
+          const response = await axios.post(
+            'http://localhost:8080/auth/change-password',
+            payload,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+              }
             }
-          }
-        );
-        setStatus({ success: response.data.message || 'Password changed successfully!' });
-        resetForm();
-      } catch (error) {
-        setStatus({
-          error:
-            error.response?.data?.message ||
-            'Failed to change password. Please try again.'
-        });
-      } finally {
-        setSubmitting(false);
+          );
+
+          setStatus({ success: response.data.message || 'Password changed successfully!' });
+          resetForm();
+        } catch (error) {
+          setStatus({
+            error:
+              error.response?.data?.message ||
+              'Failed to change password. Please try again.'
+          });
+        } finally {
+          setSubmitting(false);
+        }
       }
-    }
+
   });
 
   return (

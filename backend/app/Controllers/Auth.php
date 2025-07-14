@@ -3,6 +3,7 @@
 use App\Models\UserModel;
 use CodeIgniter\RESTful\ResourceController;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class Auth extends ResourceController
 {
@@ -40,87 +41,77 @@ class Auth extends ResourceController
 
     public function login()
     {
-        // Get raw JSON input as an associative array
         $data = $this->request->getJSON(true);
 
-        // Validation rules
         $rules = [
             'email'    => 'required|valid_email',
             'password' => 'required',
         ];
 
-        // Validate JSON data
         if (!$this->validateData($data, $rules)) {
             return $this->fail($this->validator->getErrors());
         }
 
-        // Load user by email
         $userModel = new UserModel();
         $user = $userModel->where('email', $data['email'])->first();
 
-        // Verify user and password
         if (!$user || !password_verify($data['password'], $user['password'])) {
             return $this->failUnauthorized('Invalid email or password');
         }
 
-        // JWT payload
         $payload = [
             'iat'   => time(),
-            'exp'   => time() + 3600, // Token valid for 1 hour
+            'exp'   => time() + 3600,
             'uid'   => $user['id'],
             'email' => $user['email'],
         ];
 
-        // Encode token using your secret key
         $token = JWT::encode($payload, $this->key, 'HS256');
 
-        // Respond with token
         return $this->respond([
             'message' => 'Login Successful',
             'token'   => $token,
         ]);
     }
 
-    public function changePassword()
+    public function changepassword()
     {
         $authHeader = $this->request->getHeader('Authorization');
-        if(!$authHeader || preg_match('/Bearer\s(\S+)/', $authHeader->getValue(), $matches)){
+
+        if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader->getValue(), $matches)) {
             return $this->failUnauthorized('Missing or invalid authorization headers');
         }
 
         $token = $matches[1];
 
-        try{
-            $decoded = JWT::decode($token, new Firebase\JWT\Key($this->key,'HS256'));
-        }catch(\Exception $e)
-        {
-            return $this->failUnauthorized('Invalid or token expired');
+        try {
+            $decoded = JWT::decode($token, new Key($this->key, 'HS256'));
+        } catch (\Exception $e) {
+            return $this->failUnauthorized('Invalid or expired token');
         }
-        $userid = $decoded->uid;
 
+        $userId = $decoded->uid;
         $data = $this->request->getJSON(true);
 
         $rules = [
             'old_password' => 'required',
-            'new_password' => 'required|min_length[6]'
+            'new_password' => 'required|min_length[6]',
         ];
 
-        if(!$this->validate($data,$rules))
-        {
+        if (!$this->validateData($data, $rules)) {
             return $this->fail($this->validator->getErrors());
         }
 
         $userModel = new UserModel();
-        $user =  $userModel->find($userid);
+        $user = $userModel->find($userId);
 
-        if(!$user || password_verify($data['old_password'],$user['password'])){
-            return $this->fail('old password is incorrect');
+        if (!$user || !password_verify($data['old_password'], $user['password'])) {
+            return $this->fail('Old password is incorrect');
         }
 
-        $user['password'] = password_hash($data['new_password'],PASSWORD_DEFAULT);
-        $userModel->update($userid,$user);
+        $user['password'] = password_hash($data['new_password'], PASSWORD_DEFAULT);
+        $userModel->update($userId, $user);
 
-        return $this->respond(['message'=>'password update successfully']);
+        return $this->respond(['message' => 'Password updated successfully']);
     }
-
 }

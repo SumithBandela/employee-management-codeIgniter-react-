@@ -22,9 +22,18 @@ $routes->options('auth/signup', function () {
         ->setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 });
 
+$routes->options('auth/change-password', function () {
+    return service('response')
+        ->setStatusCode(200)
+        ->setHeader('Access-Control-Allow-Origin', '*')
+        ->setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        ->setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+});
+
 
 $routes->post('auth/login', 'Auth::login');
 $routes->post('auth/signup', 'Auth::signup');
+$routes->post('auth/change-password', 'Auth::changepassword');
 
 $routes->group('api',function($routes){
     $routes->resource('employees', ['controller' => 'Employee']);
