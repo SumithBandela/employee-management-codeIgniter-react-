@@ -76,11 +76,11 @@ class Auth extends ResourceController
 
     public function changepassword()
     {
-        $authHeader = $this->request->getHeader('Authorization');
+       $authHeader = $this->request->getHeader('Authorization');
 
-        if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader->getValue(), $matches)) {
-            return $this->failUnauthorized('Missing or invalid authorization headers');
-        }
+     if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader->getValue(), $matches)) {
+         return $this->failUnauthorized('Missing or invalid authorization headers');
+       } 
 
         $token = $matches[1];
 

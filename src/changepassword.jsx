@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { useFormik } from 'formik';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 export function ChangePassword() {
+  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       old_password: '',
@@ -39,6 +40,7 @@ export function ChangePassword() {
           );
 
           setStatus({ success: response.data.message || 'Password changed successfully!' });
+          navigate(-1)
           resetForm();
         } catch (error) {
           setStatus({
